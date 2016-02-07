@@ -1,0 +1,303 @@
+/**
+ * 
+ */
+package view;
+
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.geom.*;
+import java.awt.Graphics2D;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.Shape;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
+import java.awt.geom.Ellipse2D;
+import java.awt.image.BufferedImage;
+import java.util.LinkedList;
+import java.awt.Graphics;
+import javax.swing.JPanel;
+import javafx.scene.shape.Ellipse;
+import javafx.scene.shape.Line;
+
+
+/**
+ * @author ao1013
+ * @version 11/7/15 TCSS 305
+ */
+public class Canvas extends JPanel implements MouseMotionListener, MouseListener {
+    /**
+     * Auto Generated Serial Version.
+     */
+    private static final long serialVersionUID = -4358260754220693631L;
+    /** The default size for this JPanel. */
+    private static final Dimension DEFAULT_SIZE = new Dimension(400, 200);
+    
+    /**
+     * A linked list to store Drawing elements and to implement the undo and redo feature.
+     */
+    private LinkedList<BufferedImage> myDrawings;
+    /**
+     * an array of drawing actions to determine what object needs to be drawn.
+     */
+    private final DrawAction[] myDrawingActions = new DrawAction[] {
+        new DrawAction() { public void draw(final Graphics2D theDrawer) {
+                drawPencil(theDrawer); 
+            }
+        },
+        new DrawAction() { public void draw(final Graphics2D theDrawer) { 
+                drawLine(theDrawer); 
+            } 
+        },
+        new DrawAction() { public void draw(final Graphics2D theDrawer) { 
+                drawCircle(theDrawer); 
+            } 
+        },
+        new DrawAction() { public void draw(final Graphics2D theDrawer) { 
+                drawSquare(theDrawer);
+            } 
+        }
+    };
+    /**
+     * Determines the currently selected tool.
+     */
+    private int myCurrentToolIndex;
+    /**
+     * Begin point for mouse action.
+     */
+    private Point myStartPoint;
+    /**
+     * End point for mouse action.
+     */
+    private Point myEndPoint;
+    /**
+     * Color object to determine the color to be painted with.
+     */
+    private Color myColor;
+    /**
+     * Int to hold the pen size that is being drawn with.
+     */
+    private int myPenSize;
+    /**
+     * The Default constructor to initialize all variables of the canvas.
+     */
+    private boolean myCurrentDrawing;
+    /**
+     * Constructor for the canvas class, sets up all 
+     * elements to have the program run smoothly.
+     */
+    public Canvas() {
+        super();
+        addMouseMotionListener(this);
+        addMouseListener(this);
+        myStartPoint = null;
+        myEndPoint = new Point();
+        this.setPreferredSize(DEFAULT_SIZE);
+        this.setBackground(Color.WHITE);     
+        myDrawings = new LinkedList<BufferedImage>();
+       
+        
+    }
+    @Override
+    public void paintComponent(final Graphics theGraphics) {
+       
+        super.paintComponent(theGraphics);
+        final Graphics2D g = (Graphics2D) theGraphics;
+        if (!myDrawings.isEmpty()) {
+            g.drawImage(myDrawings.get(myCurrentToolIndex), 0, 0, null);
+        }
+        g.setColor(myColor);
+        g.setStroke(new BasicStroke(myPenSize));
+        if (myStartPoint != null && myEndPoint != null) {
+            myDrawingActions[myCurrentToolIndex].draw(g);
+        }
+       // myDrawings.add(this.getScreen());
+    }
+
+
+    @Override
+    public void mouseClicked(final MouseEvent theMouseEvent) {
+        // TODO Auto-generated method stub
+        myStartPoint = theMouseEvent.getPoint();
+        myCurrentDrawing = true;
+        System.out.println("Clicked "); 
+        repaint();
+    }
+
+    @Override
+    public void mouseEntered(final MouseEvent theMouseEvent) {
+        final Cursor changeCursor = new Cursor(Cursor.CROSSHAIR_CURSOR);
+        this.setCursor(changeCursor);
+    }
+    @Override
+    public void mousePressed(final MouseEvent theMouseEvent) {
+        // TODO Auto-generated method stub
+        myStartPoint = theMouseEvent.getPoint();
+        System.out.println("Pressed "); 
+        repaint();
+    }
+
+    @Override
+    public void mouseReleased(final MouseEvent theMouseEvent) {
+        // TODO Auto-generated method stub
+        myCurrentDrawing = false;
+        myEndPoint = theMouseEvent.getPoint();
+        System.out.println("Released ");  
+        repaint();
+    }
+
+    @Override
+    public void mouseDragged(final MouseEvent theMouseEvent) {
+        // TODO Auto-generated method stub
+        
+        if (myCurrentDrawing) {
+            myEndPoint = theMouseEvent.getPoint(); 
+            repaint();
+        }
+    }
+
+    @Override
+    public void mouseMoved(final MouseEvent theMouseEvent) {
+
+      
+    }
+    @Override
+    public void mouseExited(final MouseEvent theEvent) {   
+    }
+    /**
+     * Function that will set the current tool being used.
+     * @param theSelection Variable to change the current tool index.
+     */
+    public void setTools(final int theSelection) {
+        myCurrentToolIndex = theSelection;    
+    }
+    /**
+     * Over loaded function to set color and the pen size.
+     * @param theColor changes the color.
+     * @param thePenSize changes the pen size.
+     */
+    public void setTools(final Color theColor, 
+                         final int thePenSize) {
+        myPenSize = thePenSize;
+        myColor = theColor;
+        
+    }
+    /**
+     * A function to make the grid appear.
+     */
+    void drawGrid() {
+       //TODO 
+    }
+    /**
+     * A function to turn the grid off.
+     */
+    void deleteGrid() {
+        //TODO 
+    }
+    /**
+     * A function to draw with a pencil tool.
+     * @param theDrawer The object that will draw to the screen.
+     */
+    private void drawPencil(final Graphics2D theDrawer) {
+      //TODO 
+    }
+    /**
+     * A function to draw with a square tool.
+     * @param theDrawer The object that will draw to the screen.
+     */
+    private void drawSquare(final Graphics2D theDrawer) {
+        final int width = (int) (myEndPoint.getX() - myStartPoint.getX());
+        final int height = (int) (myEndPoint.getY() - myStartPoint.getY());
+        theDrawer.drawRect((int) myStartPoint.getX(), (int) myStartPoint.getY(), 
+                           width, height);
+    }
+    /**
+     * A function to draw with a circle tool.
+     * @param theDrawer The object that will draw to the screen.
+     */
+    private void drawCircle(final Graphics2D theDrawer) {
+        int startX = (int) myStartPoint.getX();
+        int startY = (int) myStartPoint.getY();
+        final int width = (int) (myEndPoint.getX() - myStartPoint.getX());
+        final int height = (int) (myEndPoint.getY() - myStartPoint.getY());
+        if (myEndPoint.getX() < myStartPoint.getX()) {
+            startX = (int) (myStartPoint.getX() - width);
+        }
+        if (myEndPoint.getY() < myStartPoint.getY()) {
+            startY = (int) (myStartPoint.getY() - height);
+        } 
+        theDrawer.drawOval(startX, startY, width, height);
+    }
+    /**
+     * A function to draw with a line tool.
+     * @param theDrawer The object that will draw to the screen.
+     */
+    private void drawLine(final Graphics2D theDrawer) {
+        theDrawer.drawLine((int) myStartPoint.getX(), (int) myStartPoint.getY(), 
+                           (int) myEndPoint.getX(), (int) myEndPoint.getY());
+
+    }
+    /**
+     * A function that will be called after every drawing and saved 
+     * to a linked list for implementation of undo and redo functionality.
+     * @return WIll return a BufferedImage to save into the undo and redo chain.
+     */
+    private BufferedImage getScreen() {
+        final BufferedImage image = new BufferedImage(this.getWidth(),
+                                                this.getHeight(), BufferedImage.TYPE_INT_RGB);
+        this.paint(image.getGraphics()); 
+        return image;
+    }
+    /**
+     * Undos the last action.
+     * @return returns if the redo can be done.
+     */
+    public boolean undoScreen() {
+        if (myDrawings.getLast() != null) {
+            myCurrentToolIndex--;
+            repaint();
+        }
+        return true;
+    }
+    /**
+     * Redos the last action.
+     * @return Returns if undo can be done.
+     */
+    public boolean redoScreen() {
+        if (myDrawings.get(myCurrentToolIndex + 1) != null) {
+            myCurrentToolIndex++;
+            repaint();
+        }
+        return true;
+    }
+    /**
+     * Clears the screen.
+     * adds a blank buffered image 
+     */
+    public void clearScreen() {
+        myDrawings.add(new BufferedImage(this.getWidth(), this.getHeight(), 0));
+        myCurrentToolIndex++;
+        repaint();
+    }
+    /**
+     * Interface to easily select the tools being drawn. 
+     * @author Shikari
+     * @version 11/19/15 Autumn TCSS305
+     */
+    interface DrawAction {
+        /**
+         * Template draw function, to be implemented within inherited class.
+         * @param theDrawer graphics object to draw with.
+         */
+        void draw(final Graphics2D theDrawer);
+    }
+    
+   
+    
+}
+
+

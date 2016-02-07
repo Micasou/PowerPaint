@@ -1,0 +1,85 @@
+/**
+ * 
+ */
+package view;
+
+import java.awt.event.KeyEvent;
+import javax.swing.ImageIcon;
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JRadioButtonMenuItem;
+
+
+/**
+ * @author ao1013
+ * @version 11/7/15 TCSS 305
+ */
+public class Toolbar {
+    /** The default width of the frame. */
+    public static final int DEFAULT_WIDTH = 400;
+    /** The default height of the frame. */
+    public static final int DEFAULT_HEIGHT = 200;
+   
+    private JMenuBar myMenuBar;
+    private JFrame myFrame;
+    public Toolbar() {
+        myFrame = new JFrame("PowerPaint");
+        myMenuBar = new JMenuBar();
+      
+    }
+   /**
+    * 
+    */
+    public void start() {
+       
+        final JMenu fileMenu = new JMenu("File");
+        final JMenuItem exit = new JMenuItem("Exit");
+        final JMenuItem undoAll = new JMenuItem("Undo all changes", KeyEvent.VK_N);
+        fileMenu.add(undoAll);
+        fileMenu.addSeparator();
+        fileMenu.add(exit);
+        myMenuBar.add(fileMenu);
+         
+        final JMenu options = new JMenu("Options");
+        final JCheckBoxMenuItem grid = new JCheckBoxMenuItem("Grid");
+        final JMenuItem thickness = new JMenuItem("Thickness");
+        JMenuItem color = new JMenuItem("Color");
+        options.add(grid);
+        options.addSeparator();
+        options.add(thickness);
+        options.addSeparator();
+        options.add(color);
+        myMenuBar.add(options);
+         
+        final JMenu tools = new JMenu("Tools");
+        final JRadioButtonMenuItem pencil = new JRadioButtonMenuItem("Pencil",
+                                                    new ImageIcon("./images/pencil.gif"));
+        final JRadioButtonMenuItem line = new JRadioButtonMenuItem("Line",
+                                                    new ImageIcon("./images/line.gif"));
+        final JRadioButtonMenuItem rectangle = new JRadioButtonMenuItem("Rectangle",
+                                                    new ImageIcon("./images/rectangle.gif"));
+        final JRadioButtonMenuItem ellipse = new JRadioButtonMenuItem("Ellipse",
+                                                    new ImageIcon("./images/ellipse.gif"));
+        tools.add(pencil);
+        tools.addSeparator();
+        tools.add(line);
+        tools.addSeparator();
+        tools.add(rectangle);
+        tools.addSeparator();
+        tools.add(ellipse);
+        myMenuBar.add(tools);
+         
+        final JMenu help = new JMenu("Help");
+        final JMenuItem about = new JMenuItem("About");
+        help.add(about);
+        myMenuBar.add(help);
+        fileMenu.setMnemonic(KeyEvent.VK_F);
+         
+        myFrame.setJMenuBar(myMenuBar);
+        myFrame.setSize(DEFAULT_WIDTH, DEFAULT_HEIGHT);
+        myFrame.setVisible(true);
+    }
+}

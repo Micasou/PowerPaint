@@ -1,0 +1,17 @@
+package view;
+/**
+ * @author ao1013
+ * @version 11/7/15 TCSS 305
+ */
+public class PowerPaintGUI {
+    
+    /**
+     * The start method to begin the GUI.
+     */
+    private Toolbar myToolBar;
+    public void start() {
+        myToolBar = new Toolbar();
+        myToolBar.start();
+    }
+
+}

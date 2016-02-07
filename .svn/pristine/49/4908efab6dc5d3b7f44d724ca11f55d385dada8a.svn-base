@@ -1,0 +1,241 @@
+/**
+ * 
+ */
+package view;
+
+import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JColorChooser;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JRadioButtonMenuItem;
+import javax.swing.JSlider;
+import javax.swing.JToolBar;
+import javax.swing.WindowConstants;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
+
+/**
+ * @author ao1013
+ * @version 11/7/15 TCSS 305
+ */
+public class Toolbar {
+    private static final String TITLE_ICON = "./images/w.gif";
+    /**
+     * String array to store pencil information.
+     */
+    private static final String[] PENCIL_STRING = {"pencil", "./images/pencil.gif"};
+    /**
+     * String array to store line information.
+     */
+    private static final String[] LINE_STRING = {"Line", "./images/line.gif"};
+    /**
+     * String array to store rectangle information.
+     */
+    private static final String[] RECTANGLE_STRING = {"Rectangle", "./images/rectangle.gif"};
+    /**
+     * String array to store ellipse information.
+     */
+    private static final String[] ELLIPSE_STRING = {"Ellipse", "./images/ellipse.gif"};
+   /**
+    * The Menu Bar for the frame.
+    */
+    private JMenuBar myMenuBar;
+    /**
+     * The frame of the paint program that holds all components.
+     */
+    private JFrame myFrame;
+    /**
+     * The dragable tool bar.
+     */
+    private JToolBar myMovableTool;
+    /**
+     * The color chooser object.
+     */
+    private JColorChooser myColor;
+    /**
+     * The color object to hold the selected color.
+     */
+    private java.awt.Color myCurrentColor;
+    /**
+     * 
+     */
+    private int myPenThickness;
+    /**
+     * The canvas object, where all painting occurs.
+     */
+    private Canvas myCanvas;
+    
+    /**
+     * Default constructor to initialize all components.
+     */
+    public Toolbar() {
+        myColor = new JColorChooser();
+        myCurrentColor = java.awt.Color.BLACK;
+        myFrame = new JFrame("PowerPaint");
+        final ImageIcon tempIcon = new ImageIcon(TITLE_ICON);
+        myFrame.setIconImage(tempIcon.getImage());
+        myCanvas = new Canvas();
+        myFrame.add(myCanvas, BorderLayout.CENTER);
+        myMovableTool = new JToolBar();
+        myMenuBar = new JMenuBar();
+    }
+   /**
+    * 
+    */
+    public void start() {
+       
+        this.setupFile();
+        this.setupOptions();
+        this.setupToolsInMenu();
+        this.setupHelp();
+        myFrame.pack();
+        myFrame.setVisible(true);
+        myFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+    }
+    /**
+     * Initializer method to setup the File within the main menu.
+     */
+    void setupFile() {
+        final JMenu fileMenu = new JMenu("File");
+        fileMenu.setMnemonic(KeyEvent.VK_F);
+        final JMenuItem exit = new JMenuItem("Exit", KeyEvent.VK_X);
+        exit.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(final ActionEvent theEvent) {
+                myFrame.setVisible(false); //you can't see me!
+                myFrame.dispose(); //Destroy the JFrame object
+            }
+        });
+        final JMenuItem undoAll = new JMenuItem("Undo all changes", KeyEvent.VK_U);
+        undoAll.setEnabled(false);
+        fileMenu.add(undoAll);
+        fileMenu.addSeparator();
+        fileMenu.add(exit);
+        myMenuBar.add(fileMenu);
+        
+    }
+    /**
+     * Initializer method to setup the Options within the main menu.
+     */
+    void setupOptions() {
+        final int min = 0;
+        final int max = 20;
+        final int majorTickSpacing = 5;
+        final JMenu options = new JMenu("Options");
+        options.setMnemonic(KeyEvent.VK_O);
+        final JCheckBoxMenuItem grid = new JCheckBoxMenuItem("Grid");
+        grid.setMnemonic(KeyEvent.VK_G);
+        final JMenu thickness = new JMenu("Thickness");
+        thickness.setMnemonic(KeyEvent.VK_T);
+        final JSlider slider = new JSlider(JSlider.HORIZONTAL, min, max, min + 1);
+        slider.setMajorTickSpacing(majorTickSpacing);
+        slider.setMinorTickSpacing(1);
+        slider.setPaintTicks(true);
+        slider.setPaintLabels(true);
+        slider.addChangeListener(new ChangeListener() {
+            public void stateChanged(final ChangeEvent theEvent) { 
+                myPenThickness = slider.getValue();
+            }
+        });
+        thickness.add(slider);
+        final JCheckBoxMenuItem color = new JCheckBoxMenuItem("Color...");
+        color.setMnemonic(KeyEvent.VK_C);
+        color.addActionListener(new ActionListener() {
+            public void actionPerformed(final ActionEvent theEvent) {
+                myCurrentColor = JColorChooser.showDialog(myFrame, 
+                                                          "Choose a color", myCurrentColor);
+            }
+        });
+        options.add(grid);
+        options.addSeparator();
+        options.add(thickness);
+        options.addSeparator();
+        options.add(color);
+        myMenuBar.add(options);
+    }
+    /**
+     * Initializer method to setup the Tools within the main menu.
+     */
+    void setupToolsInMenu() {
+        final JMenu tools = new JMenu("Tools");
+        tools.setMnemonic(KeyEvent.VK_T);
+        final JRadioButtonMenuItem pencil = new JRadioButtonMenuItem(PENCIL_STRING[0],
+                                                    new ImageIcon(PENCIL_STRING[1]));
+        pencil.setMnemonic(KeyEvent.VK_P);
+        final JRadioButtonMenuItem line = new JRadioButtonMenuItem(LINE_STRING[0],
+                                                    new ImageIcon(LINE_STRING[1]));
+        line.setMnemonic(KeyEvent.VK_L);
+        final JRadioButtonMenuItem rectangle = new JRadioButtonMenuItem(RECTANGLE_STRING[0],
+                                                    new ImageIcon(RECTANGLE_STRING[1]));
+        rectangle.setMnemonic(KeyEvent.VK_R);
+        final JRadioButtonMenuItem ellipse = new JRadioButtonMenuItem(ELLIPSE_STRING[0],
+                                                    new ImageIcon(ELLIPSE_STRING[1]));
+        ellipse.setMnemonic(KeyEvent.VK_E);
+        tools.add(pencil);
+        tools.addSeparator();
+        tools.add(line);
+        tools.addSeparator();
+        tools.add(rectangle);
+        tools.addSeparator();
+        tools.add(ellipse);
+        myMenuBar.add(tools, BorderLayout.NORTH);
+        this.setupTools();
+    }
+    /**
+     * Initializer method to setup the moving Tool bar within the main frame.
+     */
+    void setupTools() {
+        final JButton mPencil = new JButton(PENCIL_STRING[0],
+                                            new ImageIcon(PENCIL_STRING[1]));
+        final JButton mLine = new JButton(LINE_STRING[0],
+                                          new ImageIcon(LINE_STRING[1]));
+        final JButton mRectangle = new JButton(RECTANGLE_STRING[0],
+                                               new ImageIcon(RECTANGLE_STRING[1]));
+        final JButton mEllipse = new JButton(ELLIPSE_STRING[0],
+                                             new ImageIcon(ELLIPSE_STRING[1]));
+        myMovableTool.add(mPencil);
+        myMovableTool.add(mLine);
+        myMovableTool.add(mRectangle);
+        myMovableTool.add(mEllipse);
+        myFrame.add(myMovableTool, BorderLayout.SOUTH); 
+    }
+    /**
+     * Initializer method to setup the Help within the main menu.
+     */
+    void setupHelp() {
+        final JMenu help = new JMenu("Help");
+        help.setMnemonic(KeyEvent.VK_H);
+        final JMenuItem about = new JMenuItem("About...", KeyEvent.VK_A);
+        about.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(final ActionEvent theEvent) {
+                final JFrame aboutFrame = new JFrame("Help");
+                final ImageIcon tempIcon = new ImageIcon(TITLE_ICON);
+                aboutFrame.setIconImage(tempIcon.getImage());
+                aboutFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+                
+                aboutFrame.add(new JLabel("<html>TCSS 305 PowerPaint, Autumn 2015<br>"
+                                + " Some help would probably be nice huh? <br>"
+                                + " Enjoy this pointless text, MUWHAHAHA</html>"),
+                               BorderLayout.CENTER);
+                aboutFrame.pack();
+                aboutFrame.setVisible(true);
+              
+            }
+        });
+        help.add(about);
+        myMenuBar.add(help);
+        myFrame.setJMenuBar(myMenuBar);
+    }
+}

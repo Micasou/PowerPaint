@@ -1,0 +1,17 @@
+/**
+ * 
+ */
+package view;
+
+/**
+ * @author ao1013
+ * @version 11/7/15 TCSS 305
+ */
+public class PowerPaintMain {
+    private PowerPaintMain() {
+        throw new IllegalStateException();
+    }
+    public static void main(String[] theArgs) {
+        new PowerPaintGUI().start();
+    }
+}
